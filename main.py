@@ -6,8 +6,8 @@ PIPEWIDTH = 60
 PIPEHEIGHT = 300
 BIRDWIDTH = 60
 BIRDHEIGHT = 45
-SPEED = 200
-SPACE_SIZE = 50
+SPEED = 30
+SPACE_SIZE = 10
 SPACE_PIPE = 200
 class Bird:
     def __init__(self):
@@ -67,7 +67,7 @@ def frame(bird,pipes):
         window.after(SPEED, frame, bird, pipes)
         canvas.create_image(0, 580, anchor=NW, image=ground)
 def move(bird):
-    bird.y -= SPACE_SIZE*1.5
+    bird.y -= SPACE_SIZE*7
     canvas.delete("bird")
     canvas.create_image(bird.x, bird.y, anchor=NW, image=birdImage, tag="bird")
 
@@ -92,11 +92,11 @@ def gameOver():
     canvas.create_image(-350,0,anchor=NW,image=over)
     label1 = Label(window,text="Score : {}".format(score),font=('consolas',40),relief=RAISED)
     label1.place(x=120,y=500)
-    label2 = Label(window, text="Press space to try again".format(score), font=('consolas', 20), relief=RAISED)
+    label2 = Label(window, text="Press Enter to try again".format(score), font=('consolas', 20), relief=RAISED)
     label2.place(x=70, y=600)
     score = 0
     window.unbind('<space>')
-    window.bind('<space>',lambda event: run())
+    window.bind('<Return>',lambda event: run())
 def run():
     global label
     global first
@@ -110,7 +110,15 @@ def run():
     pipes = Pipes()
     window.bind('<space>', lambda event: move(bird))
     frame(bird, pipes)
+def start():
+    canvas.create_image(15, 0, anchor=NW, image=startImage)
+def motion(event):
+    x, y = event.x, event.y
+    if (x < 220 and x > 60 and y > 500 and y < 575):
+        run()
+
 window = Tk()
+window.bind('<Button-1>', motion)
 window.title("Flappy Bird")
 window.resizable(False,False)
 canvas = Canvas(window, width = GAME_WIDTH,height = GAME_HEIGHT,bg="Black")
@@ -121,6 +129,7 @@ reversePipeImage = PhotoImage(file='ReversePipe.png')
 background = PhotoImage(file='Background.png')
 over = PhotoImage(file='gameover.png')
 ground = PhotoImage(file='Ground.png')
+startImage = PhotoImage(file='startScreen.png')
 screenWidth = window.winfo_screenwidth()
 screenHeight = window.winfo_screenheight()
 
@@ -132,5 +141,5 @@ score = 0
 label1 = 0
 label2 = 0
 first = True
-run()
+start()
 window.mainloop()
